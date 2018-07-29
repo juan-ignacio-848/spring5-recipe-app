@@ -1,13 +1,12 @@
 package guru.springframework.domain;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
-// Recipe - Notes and Recipe - Ingredients relationships will have CascadeType.All because Recipe is going to be our
-// primary object and we won't be working with ingredients / notes independently. So there won't be a use case
-// in our app that will need an IngredientRepository/NotesRepository. On the other hand, Categories and UnitOfMeasures
-// are going to be maintained independent of Recipes.
-
+/**
+ * Created by jt on 6/13/17.
+ */
 @Entity
 public class Recipe {
 
@@ -16,30 +15,32 @@ public class Recipe {
     private Long id;
 
     private String description;
-    private Integer preparationTime;
+    private Integer prepTime;
     private Integer cookTime;
     private Integer servings;
     private String source;
     private String url;
+
+    @Lob
     private String directions;
 
-    @Lob // This indicates hibernate that this property is a (BYTE) LARGE OBJECT [BLOB]
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recipe")
+    private Set<Ingredient> ingredients = new HashSet<>();
+
+    @Lob
     private Byte[] image;
 
-    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    private Notes notes;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recipe")
-    private Set<Ingredient> ingredients;
-
-    @Enumerated(value = EnumType.STRING) // EnumType.ORDINAL => 1,2,3,4 in the column. If we add another enum in the middle of the difficulties it will mess up the DB. So better use the String!
+    @Enumerated(value = EnumType.STRING)
     private Difficulty difficulty;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    private Notes notes;
+
     @ManyToMany
-    @JoinTable(name = "recipes_category", // The association table will be called: 'recipes_category'
-            joinColumns = @JoinColumn(name = "recipe_id"), // The association table will have a FK to Recipe and that column will be named: recipe_id
-            inverseJoinColumns = @JoinColumn(name = "category_id")) // The association table will have a FK to Category and that column will be named: category_id
-    private Set<Category> categories;
+    @JoinTable(name = "recipe_category",
+        joinColumns = @JoinColumn(name = "recipe_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id"))
+    private Set<Category> categories = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -57,12 +58,12 @@ public class Recipe {
         this.description = description;
     }
 
-    public Integer getPreparationTime() {
-        return preparationTime;
+    public Integer getPrepTime() {
+        return prepTime;
     }
 
-    public void setPreparationTime(Integer preparationTime) {
-        this.preparationTime = preparationTime;
+    public void setPrepTime(Integer prepTime) {
+        this.prepTime = prepTime;
     }
 
     public Integer getCookTime() {
