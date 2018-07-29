@@ -17,8 +17,6 @@ public class Recipe {
     private String source;
     private String url;
     private String directions;
-    //todo add
-    //private Difficulty difficulty;
 
     @Lob // This indicates hibernate that this property is a (BYTE) LARGE OBJECT [BLOB]
     private Byte[] image;
@@ -28,6 +26,9 @@ public class Recipe {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "recipe")
     private Set<Ingredient> ingredients;
+
+    @Enumerated(value = EnumType.STRING) // EnumType.ORDINAL => 1,2,3,4 in the column. If we add another enum in the middle of the difficulties it will mess up the DB. So better use the String!
+    private Difficulty difficulty;
 
     public Long getId() {
         return id;
@@ -115,5 +116,13 @@ public class Recipe {
 
     public void setIngredients(Set<Ingredient> ingredients) {
         this.ingredients = ingredients;
+    }
+
+    public Difficulty getDifficulty() {
+        return difficulty;
+    }
+
+    public void setDifficulty(Difficulty difficulty) {
+        this.difficulty = difficulty;
     }
 }
