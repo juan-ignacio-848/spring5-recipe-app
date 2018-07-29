@@ -23,9 +23,9 @@ public class IndexController {
 
     @RequestMapping({"", "/", "/index"})
     public String getIndexPage(){
-        Optional<Category> category = categoryRepository.findByName("gato");
-        Optional<UnitOfMeasure> unitOfMeasure = unitOfMeasureRepository.findByDescription("gato");
-        Category category1 = category.orElse(null);
+        Optional<Category> categoryOptional = categoryRepository.findByName("American");
+        Optional<UnitOfMeasure> unitOfMeasureOptional = unitOfMeasureRepository.findByDescription("Teaspoon");
+        Category category = categoryOptional.orElse(null);
         return "index";
     }
 }
