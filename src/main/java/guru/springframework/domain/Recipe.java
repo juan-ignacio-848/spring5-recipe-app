@@ -3,6 +3,11 @@ package guru.springframework.domain;
 import javax.persistence.*;
 import java.util.Set;
 
+// Recipe - Notes and Recipe - Ingredients relationships will have CascadeType.All because Recipe is going to be our
+// primary object and we won't be working with ingredients / notes independently. So there won't be a use case
+// in our app that will need an IngredientRepository/NotesRepository. On the other hand, Categories and UnitOfMeasures
+// are going to be maintained independent of Recipes.
+
 @Entity
 public class Recipe {
 
