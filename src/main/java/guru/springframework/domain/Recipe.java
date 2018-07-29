@@ -30,6 +30,12 @@ public class Recipe {
     @Enumerated(value = EnumType.STRING) // EnumType.ORDINAL => 1,2,3,4 in the column. If we add another enum in the middle of the difficulties it will mess up the DB. So better use the String!
     private Difficulty difficulty;
 
+    @ManyToMany
+    @JoinTable(name = "recipes_category", // The association table will be called: 'recipes_category'
+            joinColumns = @JoinColumn(name = "recipe_id"), // The association table will have a FK to Recipe and that column will be named: recipe_id
+            inverseJoinColumns = @JoinColumn(name = "category_id")) // The association table will have a FK to Category and that column will be named: category_id
+    private Set<Category> categories;
+
     public Long getId() {
         return id;
     }
@@ -124,5 +130,13 @@ public class Recipe {
 
     public void setDifficulty(Difficulty difficulty) {
         this.difficulty = difficulty;
+    }
+
+    public Set<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Set<Category> categories) {
+        this.categories = categories;
     }
 }
