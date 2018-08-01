@@ -28,24 +28,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class IndexControllerTest {
 
-    IndexController indexController;
-
     @Mock
     RecipeService recipeService;
 
     @Mock
     Model model;
 
+    IndexController controller;
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        indexController = new IndexController(recipeService);
+        controller = new IndexController(recipeService);
     }
 
     @Test
     public void testMockMVC() throws Exception {
-        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(indexController).build();
+        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
 
         mockMvc.perform(get("/"))
                 .andExpect(status().isOk())
@@ -53,32 +53,31 @@ public class IndexControllerTest {
     }
 
     @Test
-    public void getIndexPage() {
+    public void getIndexPage() throws Exception {
 
         //given
         Set<Recipe> recipes = new HashSet<>();
+        recipes.add(new Recipe());
 
         Recipe recipe = new Recipe();
         recipe.setId(1L);
-        recipes.add(recipe);
 
-        recipes.add(new Recipe());
+        recipes.add(recipe);
 
         when(recipeService.getRecipes()).thenReturn(recipes);
 
         ArgumentCaptor<Set<Recipe>> argumentCaptor = ArgumentCaptor.forClass(Set.class);
 
         //when
-        String expectedViewName = "index";
-        String viewName = indexController.getIndexPage(model);
+        String viewName = controller.getIndexPage(model);
+
 
         //then
-        assertEquals(expectedViewName, viewName);
+        assertEquals("index", viewName);
         verify(recipeService, times(1)).getRecipes();
         verify(model, times(1)).addAttribute(eq("recipes"), argumentCaptor.capture());
         Set<Recipe> setInController = argumentCaptor.getValue();
         assertEquals(2, setInController.size());
-        //verify(model, times(1)).addAttribute(eq("recipes"), anySet()); // We aren't testing the set.
-        //verify(model, times(1)).addAttribute(anyString(), anySet());
     }
+
 }
